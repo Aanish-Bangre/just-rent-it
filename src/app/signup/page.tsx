@@ -20,8 +20,12 @@ export default function SignupPage() {
       await account.create(ID.unique(), email, password, name);
       await account.createEmailPasswordSession(email, password);
       router.push("/profile");
-    } catch (err: any) {
-      setError(err?.message || "Signup failed");
+    } catch (err: unknown) {
+      if (err && typeof err === 'object' && 'message' in err) {
+        setError((err as { message?: string }).message || "Signup failed");
+      } else {
+        setError("Signup failed");
+      }
     } finally {
       setLoading(false);
     }

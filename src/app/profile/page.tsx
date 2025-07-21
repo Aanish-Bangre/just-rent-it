@@ -4,8 +4,8 @@ import { account } from "../appwrite";
 import { useRouter } from "next/navigation";
 
 const ProfilePage = () => {
-  const [user, setUser] = useState<any>(null);
-  const [session, setSession] = useState<any>(null);
+  const [user, setUser] = useState<Record<string, unknown> | null>(null);
+  const [session, setSession] = useState<Record<string, unknown> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -17,7 +17,7 @@ const ProfilePage = () => {
         setUser(userData);
         const sessionData = await account.getSession('current');
         setSession(sessionData);
-      } catch (err: any) {
+      } catch (err: unknown) {
         setError("Not logged in");
         setTimeout(() => router.push("/login"), 1500);
       } finally {
@@ -34,16 +34,18 @@ const ProfilePage = () => {
     <div className="max-w-lg mx-auto p-8 bg-card rounded shadow mt-8">
       <h1 className="text-2xl font-bold mb-4">Profile</h1>
       <div className="space-y-2">
-        {Object.entries(user).map(([key, value]) => (
-          <div key={key}>
-            <span className="font-semibold">{key}:</span> {typeof value === 'object' ? JSON.stringify(value) : String(value)}
-          </div>
+        {Object.entries(user || {}).map(([key, value]) => (
+          typeof value === 'string' || typeof value === 'number' ? (
+            <div key={key}>
+              <span className="font-semibold">{key}:</span> {String(value)}
+            </div>
+          ) : null
         ))}
-        {session && session.provider && (
+        {session && typeof session === 'object' && 'provider' in session && (
           <>
-            <div><span className="font-semibold">OAuth Provider:</span> {session.provider}</div>
-            <div><span className="font-semibold">Provider UID:</span> {session.providerUid}</div>
-            <div><span className="font-semibold">Provider Access Token:</span> {session.providerAccessToken}</div>
+            <div><span className="font-semibold">OAuth Provider:</span> {String((session as Record<string, unknown>).provider)}</div>
+            <div><span className="font-semibold">Provider UID:</span> {String((session as Record<string, unknown>).providerUid)}</div>
+            <div><span className="font-semibold">Provider Access Token:</span> {String((session as Record<string, unknown>).providerAccessToken)}</div>
           </>
         )}
       </div>

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { account } from "../appwrite";
+import { OAuthProvider } from "appwrite";
 import Link from "next/link";
 
 const LoginPage = () => {
@@ -18,8 +19,12 @@ const LoginPage = () => {
         try {
             await account.createEmailPasswordSession(email, password);
             router.push("/profile");
-        } catch (err: any) {
-            setError(err?.message || "Login failed");
+        } catch (err: unknown) {
+            if (err && typeof err === 'object' && 'message' in err) {
+                setError((err as { message?: string }).message || "Login failed");
+            } else {
+                setError("Login failed");
+            }
         } finally {
             setLoading(false);
         }
@@ -35,12 +40,16 @@ const LoginPage = () => {
         setError(null);
         try {
             await account.createOAuth2Session(
-                "google" as any,
+                OAuthProvider.Google,
                 window.location.origin + "/profile",
                 window.location.origin + "/login"
             );
-        } catch (err: any) {
-            setError(err?.message || "Google sign-in failed");
+        } catch (err: unknown) {
+            if (err && typeof err === 'object' && 'message' in err) {
+                setError((err as { message?: string }).message || "Google sign-in failed");
+            } else {
+                setError("Google sign-in failed");
+            }
             setGoogleLoading(false);
         }
     };
@@ -99,7 +108,7 @@ const LoginPage = () => {
                 {googleLoading ? "Signing in with Google..." : "Sign in with Google"}
             </button>
             <div className="mt-4 text-center text-sm text-muted-foreground">
-                Don't have an account?{' '}
+                Don&apos;t have an account?{' '}
                 <Link href="/signup" className="text-primary hover:underline">Sign up</Link>
             </div>
         </div>
