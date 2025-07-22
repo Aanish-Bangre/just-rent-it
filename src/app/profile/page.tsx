@@ -1,53 +1,258 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { account } from "../appwrite";
+import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import ProfilSetUp from "@/components/ProfilSetUp";
+import { Button } from "@/components/ui/button";
+import { account } from "@/lib/appwrite";
+import {
+  User,
+  Phone,
+  Mail,
+  Calendar,
+  Edit3,
+  LogOut,
+  Settings,
+  ChevronRight,
+  Shield,
+  Crown
+} from "lucide-react";
+import PublishItem from "@/components/PublishItem";
 
 const ProfilePage = () => {
-  const [user, setUser] = useState<Record<string, unknown> | null>(null);
-  const [session, setSession] = useState<Record<string, unknown> | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [profiles, setProfiles] = useState<any[]>([]);
+  const [profilesLoading, setProfilesLoading] = useState(true);
+  const [profilesError, setProfilesError] = useState<string | null>(null);
   const router = useRouter();
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [publishOpen, setPublishOpen] = useState(false);
+
+  // Refetch profiles function
+  const fetchProfiles = useCallback(async () => {
+    setProfilesLoading(true);
+    setProfilesError(null);
+    try {
+      const res = await axios.get("/api/profileSetup");
+      const data = res.data;
+      if (data.success) {
+        setProfiles(data.data.documents || []);
+      } else {
+        setProfilesError(data.error || "Failed to fetch profiles");
+      }
+    } catch (err: any) {
+      setProfilesError(err.message || "Failed to fetch profiles");
+    } finally {
+      setProfilesLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    async function fetchUser() {
-      try {
-        const userData = await account.get();
-        setUser(userData);
-        const sessionData = await account.getSession('current');
-        setSession(sessionData);
-      } catch (err: unknown) {
-        setError("Not logged in");
-        setTimeout(() => router.push("/login"), 1500);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchUser();
-  }, [router]);
+    fetchProfiles();
+  }, [fetchProfiles]);
 
-  if (loading) return <div className="p-8">Loading...</div>;
-  if (error) return <div className="p-8 text-red-500">{error}</div>;
+  // Handler for after profile update
+  const handleProfileUpdated = () => {
+    setSheetOpen(false);
+    fetchProfiles();
+  };
+
+  const handleLogout = async () => {
+    await account.deleteSession("current");
+    await axios.post("/api/kill-jwt");
+    router.push("/login");
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
   return (
-    <div className="max-w-lg mx-auto p-8 bg-card rounded shadow mt-8">
-      <h1 className="text-2xl font-bold mb-4">Profile</h1>
-      <div className="space-y-2">
-        {Object.entries(user || {}).map(([key, value]) => (
-          typeof value === 'string' || typeof value === 'number' ? (
-            <div key={key}>
-              <span className="font-semibold">{key}:</span> {String(value)}
+    <div className="min-h-screen">
+      {/* Header */}
+      <div className="bg-white/80 backdrop-blur-sm border-b border-slate-200 sticky top-0 z-40">
+        <div className="max-w-4xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-slate-900 rounded-lg">
+                <Crown className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-slate-900 tracking-tight">Profile Center</h1>
+                <p className="text-sm text-slate-500">Manage your account settings</p>
+              </div>
             </div>
-          ) : null
-        ))}
-        {session && typeof session === 'object' && 'provider' in session && (
-          <>
-            <div><span className="font-semibold">OAuth Provider:</span> {String((session as Record<string, unknown>).provider)}</div>
-            <div><span className="font-semibold">Provider UID:</span> {String((session as Record<string, unknown>).providerUid)}</div>
-            <div><span className="font-semibold">Provider Access Token:</span> {String((session as Record<string, unknown>).providerAccessToken)}</div>
-          </>
-        )}
+            <Button
+              variant="outline"
+              onClick={handleLogout}
+              className="border-slate-300 text-slate-700 hover:bg-slate-50 hover:text-slate-900 font-medium"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Sign Out
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-6 py-12">
+        <div className="flex justify-end mb-8">
+          <Sheet open={publishOpen} onOpenChange={setPublishOpen}>
+            <SheetTrigger asChild>
+              <Button className="bg-green-600 hover:bg-green-700 text-white font-medium shadow-lg">
+                + Publish Item
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-full sm:max-w-lg">
+              <PublishItem />
+            </SheetContent>
+          </Sheet>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Profile Card */}
+          <div className="lg:col-span-2">
+            <Card className="border-0 shadow-xl bg-white/70 backdrop-blur-sm">
+              <CardHeader className="pb-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <Avatar className="h-16 w-16 ring-4 ring-slate-100">
+                      <AvatarImage src="/api/placeholder/64/64" />
+                      <AvatarFallback className="bg-slate-900 text-white text-lg font-bold">
+                        {profiles.length > 0 ? getInitials(profiles[0].userName) : 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <CardTitle className="text-2xl font-bold text-slate-900 tracking-tight">
+                        {profiles.length > 0 ? profiles[0].userName : 'Your Profile'}
+                      </CardTitle>
+                      <div className="flex items-center space-x-2 mt-1">
+                        <Badge variant="secondary" className="bg-slate-100 text-slate-700 border-0">
+                          <Shield className="h-3 w-3 mr-1" />
+                          Verified
+                        </Badge>
+                        <Badge variant="outline" className="border-green-200 text-green-700 bg-green-50">
+                          Active
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                  <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+                    <SheetTrigger asChild>
+                      <Button className="bg-slate-900 hover:bg-slate-800 text-white font-medium shadow-lg">
+                        <Edit3 className="h-4 w-4 mr-2" />
+                        Edit Profile
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent side="right" className="w-full sm:max-w-lg">
+                      <SheetHeader className="pb-6">
+                        <SheetTitle className="text-xl font-bold text-slate-900">
+                          Edit Profile
+                        </SheetTitle>
+                      </SheetHeader>
+                      <ProfilSetUp onProfileUpdated={handleProfileUpdated} />
+                      <SheetClose asChild>
+                        <Button
+                          variant="outline"
+                          className="mt-6 w-full border-slate-300 hover:bg-slate-50"
+                        >
+                          Close
+                        </Button>
+                      </SheetClose>
+                    </SheetContent>
+                  </Sheet>
+                </div>
+              </CardHeader>
+
+              <CardContent className="space-y-6">
+                {profilesLoading ? (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900"></div>
+                    <span className="ml-3 text-slate-600 font-medium">Loading profile...</span>
+                  </div>
+                ) : profilesError ? (
+                  <div className="p-6 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-red-700 font-medium">{profilesError}</p>
+                  </div>
+                ) : profiles.length === 0 ? (
+                  <div className="text-center py-12">
+                    <User className="h-12 w-12 mx-auto text-slate-400 mb-4" />
+                    <p className="text-slate-600 font-medium">No profile found</p>
+                    <p className="text-sm text-slate-500 mt-1">Create your profile to get started</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {/* Contact Information */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="group p-4 bg-slate-50/50 rounded-lg border border-slate-200/50 hover:bg-slate-50 transition-colors">
+                        <div className="flex items-center space-x-3">
+                          <div className="p-2 bg-blue-100 rounded-lg">
+                            <User className="h-4 w-4 text-blue-600" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-slate-500">Username</p>
+                            <p className="font-semibold text-slate-900">{profiles[0].userName}</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="group p-4 bg-slate-50/50 rounded-lg border border-slate-200/50 hover:bg-slate-50 transition-colors">
+                        <div className="flex items-center space-x-3">
+                          <div className="p-2 bg-green-100 rounded-lg">
+                            <Phone className="h-4 w-4 text-green-600" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-slate-500">Phone</p>
+                            <p className="font-semibold text-slate-900">{profiles[0].phone}</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="group p-4 bg-slate-50/50 rounded-lg border border-slate-200/50 hover:bg-slate-50 transition-colors">
+                        <div className="flex items-center space-x-3">
+                          <div className="p-2 bg-purple-100 rounded-lg">
+                            <Mail className="h-4 w-4 text-purple-600" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-slate-500">Email</p>
+                            <p className="font-semibold text-slate-900">{profiles[0].email}</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="group p-4 bg-slate-50/50 rounded-lg border border-slate-200/50 hover:bg-slate-50 transition-colors">
+                        <div className="flex items-center space-x-3">
+                          <div className="p-2 bg-orange-100 rounded-lg">
+                            <Calendar className="h-4 w-4 text-orange-600" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-slate-500">Member Since</p>
+                            <p className="font-semibold text-slate-900">{formatDate(profiles[0].createdAt)}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const geistSans = "var(--font-geist-sans)";
   const geistMono = "var(--font-geist-mono)";
   const pathname = usePathname();
-  const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/signup");
+  const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/signup") || pathname.startsWith("/setup-profile");
 
   return (
     <div className={`${geistSans} ${geistMono} antialiased`}>
