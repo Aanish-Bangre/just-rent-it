@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     path: "/",
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
-    maxAge: 60 * 15, // 15 minutes (Appwrite JWT default)
+    maxAge: 60 * 60 * 24, // 1 day
   });
   return response;
 }

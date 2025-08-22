@@ -83,11 +83,19 @@ export async function GET(req: NextRequest) {
     }
     client.setJWT(jwt);
 
-    // Get user info from Appwrite
-    const user = await account.get();
-    const userId = user.$id;
+    // Check for userId query param
+    const { searchParams } = new URL(req.url);
+    const userIdParam = searchParams.get("userId");
+    let userId;
+    if (userIdParam) {
+      userId = userIdParam;
+    } else {
+      // Get user info from Appwrite
+      const user = await account.get();
+      userId = user.$id;
+    }
 
-    // Only fetch the profile for the logged-in user
+    // Only fetch the profile for the requested user
     const response = await databases.listDocuments(
       DATABASE_ID,
       USERS_COLLECTION_ID,

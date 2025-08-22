@@ -23,8 +23,10 @@ import {
   Crown
 } from "lucide-react";
 import PublishItem from "@/components/PublishItem";
+import { useAuth } from "@/hooks/useAuth";
 
 const ProfilePage = () => {
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [profiles, setProfiles] = useState<any[]>([]);
   const [profilesLoading, setProfilesLoading] = useState(true);
   const [profilesError, setProfilesError] = useState<string | null>(null);
@@ -83,6 +85,29 @@ const ProfilePage = () => {
       .toUpperCase()
       .slice(0, 2);
   };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <div className="text-center">
+          <div className="text-lg font-medium mb-4">Checking authentication...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex justify-center items-center">
+        <div className="text-center">
+          <div className="text-red-600 font-medium text-xl mb-4">Please log in to view your profile</div>
+          <Button onClick={() => router.push('/login')} className="bg-blue-600 hover:bg-blue-700">
+            Go to Login
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
