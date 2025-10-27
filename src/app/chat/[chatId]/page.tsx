@@ -12,7 +12,7 @@ import { Send, Users, MessageSquare, LogOut } from "lucide-react";
 import axios from "axios";
 import { useAuth } from "@/hooks/useAuth";
 
-const socket = io("http://localhost:8080");
+const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:8080");
 
 // Add connection debugging
 socket.on("connect", () => {

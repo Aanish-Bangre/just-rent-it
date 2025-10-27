@@ -1,8 +1,10 @@
 const { Server } = require("socket.io");
 
+const PORT = process.env.PORT || 8080;
+const FRONTEND_URL = process.env.FRONTEND_URL || "*";
 
-const io = new Server(8080, {
-  cors: { origin: "*" },
+const io = new Server(PORT, {
+  cors: { origin: FRONTEND_URL },
 });
 
 // Track users in rooms
@@ -195,4 +197,8 @@ setInterval(() => {
   })));
 }, 30000); // Log every 30 seconds
 
-console.log("Socket.IO server running on port 8080"); 
+console.log("=================================");
+console.log("🚀 Socket.IO Server Running");
+console.log(`📍 Port: ${PORT}`);
+console.log(`🌐 CORS: ${FRONTEND_URL}`);
+console.log("================================="); 

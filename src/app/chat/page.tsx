@@ -153,13 +153,24 @@ export default function ChatListPage() {
   }
 
   return (
-    <div className="min-h-screen py-12">
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold">My Chats</h1>
+    <div className="min-h-screen py-12 bg-white dark:from-slate-950 dark:via-slate-900 dark:to-slate-900">
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="flex items-center justify-between mb-10">
+          <div>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-full mb-4">
+              <MessageSquare className="h-4 w-4" />
+              <span className="text-sm font-semibold">Messages</span>
+            </div>
+            <h1 className="text-5xl font-black tracking-tight text-slate-900 dark:text-white mb-3">
+              Your Conversations
+            </h1>
+            <p className="text-lg text-slate-600 dark:text-slate-400">
+              Connect with item owners and renters
+            </p>
+          </div>
           <Button 
             onClick={() => router.push("/")}
-            variant="outline"
+            className="bg-black hover:bg-slate-800 text-white font-semibold shadow-lg"
           >
             <Plus className="h-4 w-4 mr-2" />
             New Chat
@@ -167,15 +178,20 @@ export default function ChatListPage() {
         </div>
         
         {chats.length === 0 ? (
-          <div className="text-center py-12">
-            <MessageSquare className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-xl font-semibold text-gray-600 mb-2">No chats found</h3>
-            <p className="text-gray-500">You haven't started any conversations yet.</p>
+          <div className="text-center py-20">
+            <div className="inline-flex p-6 bg-slate-100 dark:bg-slate-800 rounded-full mb-6">
+              <MessageSquare className="h-16 w-16 text-slate-400 dark:text-slate-600" />
+            </div>
+            <h3 className="text-2xl font-bold text-slate-700 dark:text-slate-300 mb-3">No conversations yet</h3>
+            <p className="text-slate-500 dark:text-slate-400 mb-6 max-w-md mx-auto">
+              You haven't started any conversations. Browse items and connect with owners!
+            </p>
             <Button 
-              onClick={() => router.push("/")}
-              className="mt-4"
+              onClick={() => router.push("/items")}
+              className="bg-black hover:bg-slate-800 text-white font-semibold px-8 py-3"
             >
-              Start a Chat
+              Browse Items
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
         ) : (
@@ -187,38 +203,38 @@ export default function ChatListPage() {
               return (
                 <Card 
                   key={chat.$id} 
-                  className="hover:shadow-lg transition-shadow cursor-pointer hover:scale-105 transform duration-200"
+                  className="border-0 bg-white dark:bg-slate-900 shadow-xl hover:shadow-2xl transition-all cursor-pointer hover:scale-105 duration-300 group overflow-hidden"
                   onClick={() => router.push(`/chat/${chat.chatId}`)}
                 >
-                  <CardHeader className="pb-3">
+                  <CardHeader className="pb-4 bg-slate-50 dark:from-slate-800 dark:to-slate-900">
                     <div className="flex items-center gap-3">
-                      <Avatar className="h-10 w-10">
-                        <AvatarFallback>
+                      <Avatar className="h-12 w-12 ring-2 ring-white dark:ring-slate-800">
+                        <AvatarFallback className="bg-slate-100 dark:from-blue-950 dark:to-purple-950 text-slate-700 dark:text-slate-300 font-bold">
                           {getInitials(participantName)}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
-                        <CardTitle className="text-lg font-semibold">
+                        <CardTitle className="text-lg font-bold text-slate-900 dark:text-white">
                           {participantName}
                         </CardTitle>
-                        <div className="text-sm text-gray-600">
-                          Chat #{chat.chatId.slice(-8)}
+                        <div className="text-xs text-slate-500 dark:text-slate-500 font-mono">
+                          #{chat.chatId.slice(-8)}
                         </div>
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent className="space-y-3">
+                  <CardContent className="space-y-4 pt-6">
                     {chat.lastMessage ? (
-                      <div className="text-sm text-gray-600 line-clamp-2">
+                      <div className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 bg-slate-50 dark:bg-slate-800 p-3 rounded-lg">
                         {chat.lastMessage}
                       </div>
                     ) : (
-                      <div className="text-sm text-gray-500 italic">
+                      <div className="text-sm text-slate-500 dark:text-slate-500 italic p-3">
                         No messages yet
                       </div>
                     )}
                     
-                    <div className="flex items-center justify-between text-xs text-gray-500">
+                    <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-500 pt-3 border-t border-slate-100 dark:border-slate-800">
                       <div className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
                         <span>
@@ -227,13 +243,13 @@ export default function ChatListPage() {
                       </div>
                       <div className="flex items-center gap-1">
                         <Users className="h-3 w-3" />
-                        <span>{chat.participantIds.length} participants</span>
+                        <span>{chat.participantIds.length}</span>
                       </div>
                     </div>
                     
-                    <div className="flex items-center justify-end mt-2 text-blue-600 text-sm">
+                    <div className="flex items-center justify-end text-blue-600 dark:text-blue-400 text-sm font-semibold group-hover:gap-2 transition-all">
                       <span>Open Chat</span>
-                      <ArrowRight className="h-3 w-3 ml-1" />
+                      <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </CardContent>
                 </Card>

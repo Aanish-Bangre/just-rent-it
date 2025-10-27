@@ -183,15 +183,30 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div className="min-h-screen py-12">
-      <div className="max-w-4xl mx-auto px-4">
-        <h1 className="text-3xl font-bold mb-8">Notifications</h1>
+    <div className="min-h-screen py-12 bg-white dark:from-slate-950 dark:via-slate-900 dark:to-slate-900">
+      <div className="max-w-5xl mx-auto px-4">
+        <div className="mb-10">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-full mb-4">
+            <Bell className="h-4 w-4" />
+            <span className="text-sm font-semibold">Notifications</span>
+          </div>
+          <h1 className="text-5xl font-black tracking-tight text-slate-900 dark:text-white mb-3">
+            Stay Updated
+          </h1>
+          <p className="text-lg text-slate-600 dark:text-slate-400">
+            All your important updates in one place
+          </p>
+        </div>
         
         {notifications.length === 0 ? (
-          <div className="text-center py-12">
-            <Bell className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-xl font-semibold text-gray-600 mb-2">No notifications</h3>
-            <p className="text-gray-500">You don't have any notifications yet.</p>
+          <div className="text-center py-20">
+            <div className="inline-flex p-6 bg-slate-100 dark:bg-slate-800 rounded-full mb-6">
+              <Bell className="h-16 w-16 text-slate-400 dark:text-slate-600" />
+            </div>
+            <h3 className="text-2xl font-bold text-slate-700 dark:text-slate-300 mb-3">All caught up!</h3>
+            <p className="text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+              You don't have any notifications yet. We'll notify you when there's something new.
+            </p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -201,41 +216,43 @@ export default function NotificationsPage() {
               return (
                 <Card 
                   key={notification.$id} 
-                  className="hover:shadow-lg transition-shadow cursor-pointer hover:scale-105 transform duration-200"
+                  className="border-0 bg-white dark:bg-slate-900 shadow-xl hover:shadow-2xl transition-all cursor-pointer hover:scale-[1.01] duration-300 overflow-hidden"
                 >
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">
-                      <Avatar className="h-12 w-12">
-                        <AvatarFallback>
+                      <Avatar className="h-14 w-14 ring-2 ring-white dark:ring-slate-800">
+                        <AvatarFallback className="bg-slate-100 dark:from-blue-950 dark:to-purple-950 text-slate-700 dark:text-slate-300 font-bold text-lg">
                           {getInitials(senderName)}
                         </AvatarFallback>
                       </Avatar>
                       
                       <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 px-3 py-1 rounded-lg">
                             {getNotificationIcon(notification.type)}
-                            <span className="font-semibold text-lg">{senderName}</span>
+                            <span className="font-bold text-slate-900 dark:text-white">{senderName}</span>
                           </div>
-                          <Badge className={getNotificationColor(notification.type)}>
+                          <Badge className={`${getNotificationColor(notification.type)} font-bold text-xs px-3 py-1`}>
                             {notification.type}
                           </Badge>
                         </div>
                         
-                        <p className="text-gray-700 mb-3">
+                        <p className="text-slate-700 dark:text-slate-300 mb-4 text-base leading-relaxed">
                           {getNotificationMessage(notification)}
                         </p>
                         
-                        <div className="flex items-center justify-between text-sm text-gray-500">
-                          <div className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
+                        <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800">
+                          <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-500">
+                            <Clock className="h-4 w-4" />
                             <span>
                               {format(new Date(notification.lastUpdated), "MMM dd, yyyy 'at' h:mm a")}
                             </span>
                           </div>
                           
-                          <div className="flex items-center gap-1 text-blue-600">
-                            <span>You can chat in the Chat tab</span>
+                          <div className="flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400">
+                            <MessageCircle className="h-4 w-4" />
+                            <span>Open Chat</span>
+                            <ArrowRight className="h-4 w-4" />
                           </div>
                         </div>
                       </div>

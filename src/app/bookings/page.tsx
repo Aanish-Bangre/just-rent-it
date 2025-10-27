@@ -6,6 +6,7 @@ import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { Calendar, MapPin, User, DollarSign, Clock, ArrowRight } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -124,64 +125,107 @@ export default function BookingPage() {
   }
 
   return (
-    <div className="min-h-screen py-12">
-      <div className="max-w-6xl mx-auto px-4">
-        <h1 className="text-3xl font-bold mb-8">My Bookings</h1>
+    <div className="min-h-screen py-12 bg-white dark:from-slate-950 dark:via-slate-900 dark:to-slate-900">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="mb-10">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-full mb-4">
+            <Calendar className="h-4 w-4" />
+            <span className="text-sm font-semibold">My Bookings</span>
+          </div>
+          <h1 className="text-5xl font-black tracking-tight text-slate-900 dark:text-white mb-3">
+            Your Reservations
+          </h1>
+          <p className="text-lg text-slate-600 dark:text-slate-400 mt-2 max-w-2xl">
+            Manage and track all your rental bookings
+          </p>
+        </div>
         
         {bookings.length === 0 ? (
-          <div className="text-center py-12">
-            <Calendar className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-            <h3 className="text-xl font-semibold text-gray-600 mb-2">No bookings found</h3>
-            <p className="text-gray-500">You haven't made any bookings yet.</p>
+          <div className="text-center py-20">
+            <div className="inline-flex p-6 bg-slate-100 dark:bg-slate-800 rounded-full mb-6">
+              <Calendar className="h-16 w-16 text-slate-400 dark:text-slate-600" />
+            </div>
+            <h3 className="text-2xl font-bold text-slate-700 dark:text-slate-300 mb-3">No bookings found</h3>
+            <p className="text-slate-500 dark:text-slate-400 mb-6 max-w-md mx-auto">
+              You haven't made any bookings yet. Start exploring items to rent!
+            </p>
+            <Button 
+              onClick={() => router.push("/items")}
+              className="bg-black hover:bg-slate-800 text-white font-semibold px-8 py-3"
+            >
+              Browse Items
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {bookings.map((booking) => (
               <Card 
                 key={booking.$id} 
-                className="hover:shadow-lg transition-shadow cursor-pointer hover:scale-105 transform duration-200"
+                className="border-0 bg-white dark:bg-slate-900 shadow-xl hover:shadow-2xl transition-all cursor-pointer hover:scale-105 duration-300 group overflow-hidden"
                 onClick={() => router.push(`/bookings/${booking.bookingId}`)}
               >
-                <CardHeader className="pb-3">
+                <CardHeader className="pb-4 bg-slate-50 dark:from-slate-800 dark:to-slate-900">
                   <div className="flex justify-between items-start">
-                    <CardTitle className="text-lg font-semibold">
+                    <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
                       Booking #{booking.bookingId.slice(-8)}
                     </CardTitle>
-                    <Badge className={getStatusColor(booking.status)}>
+                    <Badge className={`${getStatusColor(booking.status)} font-bold text-xs px-3 py-1`}>
                       {booking.status}
                     </Badge>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="flex items-center space-x-2 text-sm text-gray-600">
-                    <Calendar className="h-4 w-4" />
-                    <span>
-                      {format(new Date(booking.startDate), "MMM dd")} - {format(new Date(booking.endDate), "MMM dd, yyyy")}
-                    </span>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2 text-sm text-gray-600">
-                    <Clock className="h-4 w-4" />
-                    <span>
-                      {format(new Date(booking.createdAt), "MMM dd, yyyy")}
-                    </span>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2 text-sm text-gray-600">
-                    <DollarSign className="h-4 w-4" />
-                    <span className="font-semibold text-green-600">
-                      ₹{booking.totalPrice}
-                    </span>
-                  </div>
-                  
-                  <div className="pt-3 border-t border-gray-100">
-                    <div className="text-xs text-gray-500 space-y-1">
-                      <div>Booking ID: {booking.bookingId}</div>
-                      <div>Item ID: {booking.listingId}</div>
+                <CardContent className="space-y-4 pt-6">
+                  <div className="flex items-center space-x-3 text-slate-600 dark:text-slate-400">
+                    <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                      <Calendar className="h-4 w-4 text-slate-700 dark:text-slate-300" />
                     </div>
-                    <div className="flex items-center justify-end mt-2 text-blue-600 text-sm">
+                    <div className="flex-1">
+                      <div className="text-xs text-slate-500 dark:text-slate-500 mb-1">Rental Period</div>
+                      <div className="text-sm font-semibold text-slate-900 dark:text-white">
+                        {format(new Date(booking.startDate), "MMM dd")} - {format(new Date(booking.endDate), "MMM dd, yyyy")}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center space-x-3 text-slate-600 dark:text-slate-400">
+                    <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                      <Clock className="h-4 w-4 text-slate-700 dark:text-slate-300" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-xs text-slate-500 dark:text-slate-500 mb-1">Booked On</div>
+                      <div className="text-sm font-semibold text-slate-900 dark:text-white">
+                        {format(new Date(booking.createdAt), "MMM dd, yyyy")}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center space-x-3 text-slate-600 dark:text-slate-400">
+                    <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg">
+                      <DollarSign className="h-4 w-4 text-slate-700 dark:text-slate-300" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="text-xs text-slate-500 dark:text-slate-500 mb-1">Total Amount</div>
+                      <div className="text-xl font-bold text-slate-900 dark:text-white">
+                        ₹{booking.totalPrice}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+                    <div className="text-xs text-slate-500 dark:text-slate-500 space-y-1 mb-3">
+                      <div className="flex justify-between">
+                        <span>Booking ID:</span>
+                        <span className="font-mono">{booking.bookingId.slice(-12)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Item ID:</span>
+                        <span className="font-mono">{booking.listingId.slice(-12)}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-end text-black dark:text-white text-sm font-semibold group-hover:gap-2 transition-all">
                       <span>View Details</span>
-                      <ArrowRight className="h-3 w-3 ml-1" />
+                      <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
                 </CardContent>

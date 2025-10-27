@@ -13,6 +13,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { addDays } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { Loader2, ArrowRight, Calendar as CalendarIcon } from "lucide-react";
 
 function getInitials(name?: string) {
   return name
@@ -186,7 +187,7 @@ export default function CheckoutPage() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-neutral-100 via-neutral-200 to-neutral-50 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-900">
+      <div className="min-h-screen flex justify-center items-center bg-white dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-900">
         <div className="text-center">
           <div className="text-lg font-medium mb-4">Checking authentication...</div>
           <Skeleton className="w-[420px] h-[420px] rounded-2xl" />
@@ -197,10 +198,10 @@ export default function CheckoutPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-neutral-100 via-neutral-200 to-neutral-50 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-900">
+      <div className="min-h-screen flex justify-center items-center bg-white dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-900">
         <div className="text-center">
           <div className="text-red-600 font-medium text-xl mb-4">Please log in to continue with checkout</div>
-          <Button onClick={() => router.push('/login')} className="bg-blue-600 hover:bg-blue-700">
+          <Button onClick={() => router.push('/login')} className="bg-black hover:bg-slate-800">
             Go to Login
           </Button>
         </div>
@@ -210,7 +211,7 @@ export default function CheckoutPage() {
 
   if (loading)
     return (
-      <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-neutral-100 via-neutral-200 to-neutral-50 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-900">
+      <div className="min-h-screen flex justify-center items-center bg-white dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-900">
         <Skeleton className="w-[420px] h-[420px] rounded-2xl" />
       </div>
     );
@@ -228,108 +229,160 @@ export default function CheckoutPage() {
     );
 
   return (
-    <div className="min-h-screen py-12">
-      <div className="max-w-3xl flex flex-col gap-10 px-4">
-        <Card className="bg-white/95 dark:bg-black/60 border-0 w-full shadow-2xl rounded-3xl backdrop-blur-md p-0 overflow-hidden">
-          <CardContent className="p-8">
-            <h1 className="text-3xl font-extrabold tracking-tight uppercase text-black dark:text-white mb-4 font-sans">
-              Checkout
-            </h1>
-            {/* Date selection and total */}
-            <div className="flex flex-col md:flex-row gap-8 mb-6">
-              <div>
-                <label className="block mb-1 font-semibold text-slate-700 dark:text-slate-200">Start Date</label>
-                {startDate && (
-                  <div className="mb-2 text-sm text-slate-600 dark:text-slate-300">
-                    Selected: {format(startDate, "PPP")}
-                  </div>
-                )}
-                <Calendar
-                  mode="single"
-                  selected={startDate}
-                  onSelect={setStartDate}
-                  disabled={(date) => date < minDate}
-                />
-              </div>
-              <div>
-                <label className="block mb-1 font-semibold text-slate-700 dark:text-slate-200">End Date</label>
-                {endDate && (
-                  <div className="mb-2 text-sm text-slate-600 dark:text-slate-300">
-                    Selected: {format(endDate, "PPP")}
-                  </div>
-                )}
-                <Calendar
-                  mode="single"
-                  selected={endDate}
-                  onSelect={setEndDate}
-                  disabled={(date) => date < minDate}
-                />
+    <div className="min-h-screen py-12 bg-white dark:from-slate-950 dark:via-slate-900 dark:to-slate-900">
+      <div className="max-w-5xl mx-auto px-4">
+        <Card className="bg-white dark:bg-slate-900 border-0 shadow-2xl rounded-3xl backdrop-blur-md overflow-hidden">
+          <CardContent className="p-8 lg:p-12">
+            <div className="mb-8">
+              <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-2 font-sans">
+                Complete Your Booking
+              </h1>
+              <p className="text-lg text-slate-600 dark:text-slate-400">
+                Select your rental dates and finalize your order
+              </p>
+            </div>
+            
+            {/* Date selection */}
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+                <CalendarIcon className="h-6 w-6 text-black dark:text-white" />
+                Choose Rental Period
+              </h2>
+              <div className="grid md:grid-cols-2 gap-6 bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl">
+                <div>
+                  <label className="block mb-3 font-semibold text-slate-700 dark:text-slate-200">
+                    Start Date
+                  </label>
+                  {startDate && (
+                    <div className="mb-3 text-sm text-slate-700 dark:text-slate-300 font-medium bg-slate-100 dark:bg-slate-800 px-3 py-2 rounded-lg">
+                      Selected: {format(startDate, "PPP")}
+                    </div>
+                  )}
+                  <Calendar
+                    mode="single"
+                    selected={startDate}
+                    onSelect={setStartDate}
+                    disabled={(date) => date < minDate}
+                    className="rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-lg"
+                  />
+                </div>
+                <div>
+                  <label className="block mb-3 font-semibold text-slate-700 dark:text-slate-200">
+                    End Date
+                  </label>
+                  {endDate && (
+                    <div className="mb-3 text-sm text-slate-700 dark:text-slate-300 font-medium bg-slate-100 dark:bg-slate-800 px-3 py-2 rounded-lg">
+                      Selected: {format(endDate, "PPP")}
+                    </div>
+                  )}
+                  <Calendar
+                    mode="single"
+                    selected={endDate}
+                    onSelect={setEndDate}
+                    disabled={(date) => date < minDate}
+                    className="rounded-xl border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-lg"
+                  />
+                </div>
               </div>
             </div>
+
+            {/* Price Summary */}
             {startDate && endDate && (
-              <div className="mb-6 p-4 rounded-xl bg-slate-100 dark:bg-slate-800 flex flex-col gap-2">
-                <div><b>Total Days:</b> {totalDays}</div>
-                <div><b>Rent:</b> ₹{totalRent}</div>
-                <div><b>Deposit:</b> ₹{item.deposit}</div>
-                <div className="text-lg font-bold"><b>Total Amount:</b> ₹{totalAmount}</div>
+              <div className="mb-8 p-6 rounded-2xl bg-slate-50 dark:from-blue-950/20 dark:to-purple-950/20 border-2 border-slate-200 dark:border-slate-700">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4">
+                  Booking Summary
+                </h3>
+                <div className="space-y-3 text-slate-700 dark:text-slate-300">
+                  <div className="flex justify-between text-base">
+                    <span>Total Days:</span>
+                    <span className="font-semibold">{totalDays} days</span>
+                  </div>
+                  <div className="flex justify-between text-base">
+                    <span>Daily Rate:</span>
+                    <span className="font-semibold">₹{item.pricePerDay}</span>
+                  </div>
+                  <div className="flex justify-between text-base">
+                    <span>Subtotal:</span>
+                    <span className="font-semibold">₹{totalRent}</span>
+                  </div>
+                  <div className="flex justify-between text-base">
+                    <span>Security Deposit:</span>
+                    <span className="font-semibold">₹{item.deposit}</span>
+                  </div>
+                  <hr className="border-slate-300 dark:border-slate-700" />
+                  <div className="flex justify-between text-2xl font-bold text-slate-900 dark:text-white">
+                    <span>Total Amount:</span>
+                    <span>₹{totalAmount}</span>
+                  </div>
+                </div>
               </div>
             )}
-            <hr className="my-6 border-slate-200 dark:border-slate-800" />
+
+            <hr className="my-8 border-slate-200 dark:border-slate-800" />
+
+            {/* Item Information */}
             <div className="mb-8">
-              <h2 className="text-xl font-bold mb-2">Item Information</h2>
-              <div className="mb-2 text-lg font-semibold">{item.title}</div>
-              <div className="mb-2 text-base text-slate-700 dark:text-slate-300">{item.description}</div>
-              {item.categories?.length > 0 && (
-                <div className="flex gap-2 mb-2 flex-wrap">
-                  {item.categories.map((cat: string, idx: number) => (
-                    <Badge
-                      key={idx}
-                      className="bg-black/10 dark:bg-white/10 uppercase tracking-tight px-3 py-1 text-xs font-bold rounded-full text-slate-700 dark:text-slate-100 border-0"
-                    >
-                      {cat}
-                    </Badge>
-                  ))}
-                </div>
-              )}
-              <div className="mb-2 text-base text-slate-600 dark:text-slate-400">
-                <span className="inline-block mr-1.5" role="img" aria-label="Location">📍</span>
-                {item.location}
-              </div>
-              <div className="mb-2 text-base text-slate-600 dark:text-slate-400">
-                <span className="font-semibold">Status:</span> {item.status}
-              </div>
-              {item.images && item.images.length > 0 && (
-                <div className="flex gap-3 flex-wrap mt-4">
-                  {item.images.map((url: string, idx: number) => (
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
+                Item Details
+              </h2>
+              <div className="bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl space-y-4">
+                <div className="flex items-start gap-4">
+                  {item.images && item.images.length > 0 && (
                     <img
-                      key={idx}
-                      src={url}
-                      alt={`Gallery ${idx + 1}`}
-                      className="h-24 w-24 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow"
-                      loading="lazy"
-                      style={{ maxWidth: 96, maxHeight: 96 }}
+                      src={item.images[0]}
+                      alt={item.title}
+                      className="h-24 w-24 object-cover rounded-xl border-2 border-white dark:border-slate-900 shadow-lg"
                     />
-                  ))}
+                  )}
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
+                      {item.title}
+                    </h3>
+                    <p className="text-base text-slate-600 dark:text-slate-400 mb-3">
+                      {item.description}
+                    </p>
+                    {item.categories?.length > 0 && (
+                      <div className="flex gap-2 flex-wrap">
+                        {item.categories.map((cat: string, idx: number) => (
+                          <Badge
+                            key={idx}
+                            className="bg-slate-100 dark:bg-slate-800 px-3 py-1 text-xs font-bold rounded-full text-slate-700 dark:text-slate-300 border-0"
+                          >
+                            {cat}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              )}
+                <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400 pt-3 border-t border-slate-200 dark:border-slate-700">
+                  <span className="text-xl" role="img" aria-label="Location">📍</span>
+                  <span className="font-medium">{item.location}</span>
+                </div>
+              </div>
             </div>
-            <hr className="my-6 border-slate-200 dark:border-slate-800" />
+
+            <hr className="my-8 border-slate-200 dark:border-slate-800" />
+
+            {/* Owner Information */}
             <div className="mb-8">
-              <h2 className="text-xl font-bold mb-2">Owner Information</h2>
-              <div className="flex items-center gap-5 mb-2">
-                <Avatar className="h-14 w-14 text-2xl uppercase font-bold border-4 border-white dark:border-black bg-slate-100 dark:bg-neutral-800">
-                  <AvatarFallback>
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
+                Owner Details
+              </h2>
+              <div className="flex items-center gap-5 bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl">
+                <Avatar className="h-16 w-16 text-2xl uppercase font-bold border-4 border-white dark:border-slate-900 bg-slate-100 dark:from-blue-950 dark:to-purple-950 shadow-lg">
+                  <AvatarFallback className="text-slate-700 dark:text-slate-300">
                     {getInitials(owner?.userName)}
                   </AvatarFallback>
                 </Avatar>
-                <div>
-                  <div className="text-lg font-semibold text-black dark:text-white min-h-[1.75rem]">
+                <div className="flex-1">
+                  <div className="text-lg font-semibold text-slate-900 dark:text-white min-h-[1.75rem] mb-1">
                     {ownerLoading ? <Skeleton className="w-32 h-6" /> : owner?.userName}
                   </div>
-                  <div className="text-base text-slate-700 dark:text-slate-300">
+                  <div className="text-base text-slate-600 dark:text-slate-400 mb-1">
                     {ownerLoading ? <Skeleton className="w-24 h-5" /> : owner?.email}
                   </div>
-                  <div className="text-base text-slate-700 dark:text-slate-300">
+                  <div className="text-base text-slate-600 dark:text-slate-400">
                     {ownerLoading ? <Skeleton className="w-20 h-5" /> : owner?.phone}
                   </div>
                   {ownerError && (
@@ -338,13 +391,25 @@ export default function CheckoutPage() {
                 </div>
               </div>
             </div>
+
+            {/* Checkout Button */}
             <Button 
               size="lg" 
-              className="w-full font-bold text-lg rounded-xl shadow bg-black text-white dark:bg-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 mt-6" 
+              className="w-full font-bold text-lg py-6 rounded-xl shadow-xl bg-black hover:bg-slate-800 text-white transition-all duration-300 hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed" 
               disabled={!startDate || !endDate || paymentLoading}
               onClick={handleCheckout}
             >
-              {paymentLoading ? "Processing..." : "Checkout"}
+              {paymentLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Processing Payment...
+                </>
+              ) : (
+                <>
+                  Proceed to Payment
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </>
+              )}
             </Button>
           </CardContent>
         </Card>

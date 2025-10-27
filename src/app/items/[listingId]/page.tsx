@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
+import { Shield, ArrowRight } from "lucide-react";
 
 function getInitials(name?: string) {
   return name
@@ -117,13 +118,13 @@ export default function ListingDetailPage() {
   // -- PAGE LAYOUT
 
   return (
-    <div className="min-h-screen py-12">
-      <div className="mx-auto max-w-5xl flex flex-col-reverse lg:flex-row gap-10 px-4">
+    <div className="min-h-screen py-12 bg-white dark:from-slate-950 dark:via-slate-900 dark:to-slate-900">
+      <div className="mx-auto max-w-6xl flex flex-col-reverse lg:flex-row gap-8 px-4">
         {/* Details & Owner in a card */}
         <div className="flex-1">
-          <Card className="bg-white/95 dark:bg-black/60 border-0 shadow-2xl rounded-3xl backdrop-blur-md p-0 overflow-hidden">
+          <Card className="bg-white dark:bg-slate-900 border-0 shadow-2xl rounded-3xl backdrop-blur-md p-0 overflow-hidden">
             <CardContent className="p-8">
-              <h1 className="text-3xl font-extrabold tracking-tight uppercase text-black dark:text-white mb-4 font-sans">
+              <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-4 font-sans">
                 {item.title}
               </h1>
               {item.categories?.length > 0 && (
@@ -131,63 +132,64 @@ export default function ListingDetailPage() {
                   {item.categories.map((cat: string, idx: number) => (
                     <Badge
                       key={idx}
-                      className="bg-black/10 dark:bg-white/10 uppercase tracking-tight px-3 py-1 text-xs font-bold rounded-full text-slate-700 dark:text-slate-100 border-0"
+                      className="bg-slate-100 dark:bg-slate-800 tracking-tight px-3 py-1 text-xs font-bold rounded-full text-slate-700 dark:text-slate-300 border-0"
                     >
                       {cat}
                     </Badge>
                   ))}
                 </div>
               )}
-              <p className="text-lg leading-snug text-neutral-700 dark:text-neutral-200 font-medium mb-6 min-h-[2.5em]">
+              <p className="text-lg leading-relaxed text-slate-700 dark:text-slate-300 font-medium mb-6 min-h-[2.5em]">
                 {item.description}
               </p>
-              <div className="flex flex-wrap items-center mb-4 gap-7">
-                <span className="block text-xl font-bold text-slate-900 dark:text-white">
+              <div className="flex flex-wrap items-center mb-4 gap-6 bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl">
+                <span className="block text-2xl font-bold text-slate-900 dark:text-white">
                   ₹{item.pricePerDay}
                   <span className="ml-2 text-base font-normal text-slate-500">/day</span>
                 </span>
-                <span className="block text-base text-slate-700 dark:text-slate-300 border-l border-slate-300 px-4">
+                <span className="block text-base text-slate-700 dark:text-slate-300 border-l-2 border-slate-300 dark:border-slate-700 px-4">
                   <b>Deposit:</b> ₹{item.deposit}
                 </span>
-                <span className="block text-base text-black/70 dark:text-white/70 border-l border-slate-300 px-4">
+                <span className="block text-base text-slate-700 dark:text-slate-300 border-l-2 border-slate-300 dark:border-slate-700 px-4">
                   <b>Status:</b>{" "}
                   <span
-                    className={`inline-block px-2 py-0.5 rounded-md font-semibold uppercase text-xs
+                    className={`inline-block px-3 py-1 rounded-full font-semibold text-xs ml-1
                     ${item.status === "active"
-                        ? "bg-emerald-100 text-emerald-800"
-                        : "bg-yellow-200 text-yellow-800"
+                        ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
+                        : "bg-yellow-100 text-yellow-800 dark:bg-yellow-950 dark:text-yellow-300"
                       }`}
                   >
                     {item.status}
                   </span>
                 </span>
               </div>
-              <div className="text-base text-slate-600 dark:text-slate-400 mb-10">
-                <span className="inline-block mr-1.5" role="img" aria-label="Location">
+              <div className="text-base text-slate-600 dark:text-slate-400 mb-8 flex items-center gap-2 bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl">
+                <span className="inline-block text-xl" role="img" aria-label="Location">
                   📍
                 </span>
-                {item.location}
+                <span className="font-medium">{item.location}</span>
               </div>
               <hr className="my-8 border-slate-200 dark:border-slate-800" />
 
               {/* Owner Section */}
-              <h2 className="text-xl mb-5 font-bold text-black/80 dark:text-white/95 flex items-center gap-2 font-sans">
+              <h2 className="text-2xl mb-6 font-bold text-slate-900 dark:text-white flex items-center gap-2 font-sans">
+                <Shield className="h-6 w-6 text-black dark:text-white" />
                 Owner Information
               </h2>
-              <div className="flex items-center gap-5">
-                <Avatar className="h-16 w-16 text-2xl uppercase font-bold border-4 border-white dark:border-black bg-slate-100 dark:bg-neutral-800">
-                  <AvatarFallback>
+              <div className="flex items-center gap-5 bg-slate-50 dark:bg-slate-800 p-6 rounded-2xl">
+                <Avatar className="h-20 w-20 text-2xl uppercase font-bold border-4 border-white dark:border-slate-900 bg-slate-100 dark:from-blue-950 dark:to-purple-950 shadow-lg">
+                  <AvatarFallback className="text-slate-700 dark:text-slate-300">
                     {getInitials(owner?.userName)}
                   </AvatarFallback>
                 </Avatar>
-                <div>
-                  <div className="text-lg font-semibold text-black dark:text-white min-h-[1.75rem]">
+                <div className="flex-1">
+                  <div className="text-xl font-semibold text-slate-900 dark:text-white min-h-[1.75rem] mb-1">
                     {ownerLoading ? <Skeleton className="w-32 h-6" /> : owner?.userName}
                   </div>
-                  <div className="text-base text-slate-700 dark:text-slate-300">
+                  <div className="text-base text-slate-600 dark:text-slate-400 mb-1">
                     {ownerLoading ? <Skeleton className="w-24 h-5" /> : owner?.email}
                   </div>
-                  <div className="text-base text-slate-700 dark:text-slate-300">
+                  <div className="text-base text-slate-600 dark:text-slate-400">
                     {ownerLoading ? <Skeleton className="w-20 h-5" /> : owner?.phone}
                   </div>
                   {ownerError && (
@@ -199,10 +201,11 @@ export default function ListingDetailPage() {
               <div className="mt-10 flex justify-end">
                 <Button
                   size="lg"
-                  className="font-bold px-8 py-3 text-lg rounded-xl shadow bg-black text-white dark:bg-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200"
+                  className="font-bold px-10 py-6 text-lg rounded-xl shadow-xl bg-black hover:bg-slate-800 text-white transition-all duration-300 hover:shadow-2xl"
                   onClick={() => router.push(`/items/${listingId}/checkout`)}
                 >
                   Rent Now
+                  <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </div>
             </CardContent>
@@ -210,13 +213,12 @@ export default function ListingDetailPage() {
         </div>
         {/* Gallery */}
         <div className="flex-1 flex flex-col items-center justify-start gap-6">
-          <div className="w-full bg-slate-100 dark:bg-slate-900 rounded-3xl overflow-hidden shadow-xl flex justify-center items-center h-[420px]">
+          <div className="w-full bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-2xl flex justify-center items-center h-[480px]">
             {item.images && item.images.length > 0 ? (
               <img
                 src={item.images[0]}
                 alt={item.title}
-                className="object-cover h-[420px] w-full rounded-3xl shadow-md"
-                style={{ maxHeight: 420 }}
+                className="object-cover h-full w-full rounded-3xl shadow-md"
               />
             ) : (
               <span className="text-3xl font-bold text-slate-400">No image</span>
@@ -229,9 +231,8 @@ export default function ListingDetailPage() {
                   key={idx}
                   src={url}
                   alt={`Gallery ${idx + 2}`}
-                  className="h-24 w-24 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow"
+                  className="h-28 w-28 object-cover rounded-2xl border-2 border-white dark:border-slate-800 shadow-lg hover:scale-110 transition-transform duration-300 cursor-pointer"
                   loading="lazy"
-                  style={{ maxWidth: 96, maxHeight: 96 }}
                 />
               ))}
             </div>

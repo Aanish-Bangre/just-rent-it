@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>UI/UX Assignment Demo</title>
+  <style>
+    /* Scrollable box */
+    .scroll-box {
+      width: 250px;
+      height: 100px;
+      border: 1px solid #ccc;
+      overflow-y: scroll;
+      padding: 5px;
+    }
+
+    /* Accordion styles */
+    .accordion {
+      background-color: #eee;
+      cursor: pointer;
+      padding: 10px;
+      width: 250px;
+      border: none;
+      text-align: left;
+      outline: none;
+      transition: 0.3s;
+      margin-top: 10px;
+    }
+
+    .accordion:hover {
+      background-color: #ddd;
+    }
+
+    .panel {
+      padding: 10px;
+      display: none;
+      background-color: #f9f9f9;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h2>Demo: Dropdown, Scrollable Attributes, Accordion</h2>
+
+  <!-- 1. Dropdown List -->
+  <label for="country">Choose a country:</label>
+  <select id="country" name="country">
+    <option value="india">India</option>
+    <option value="usa">USA</option>
+    <option value="uk">UK</option>
+    <option value="australia">Australia</option>
+  </select>
+
+  <br><br>
+
+  <!-- 2. Scrollable Attributes -->
+  <label>Choose your hobbies:</label>
+  <div class="scroll-box">
+    <input type="checkbox"> Reading<br>
+    <input type="checkbox"> Traveling<br>
+    <input type="checkbox"> Sports<br>
+    <input type="checkbox"> Cooking<br>
+    <input type="checkbox"> Gaming<br>
+    <input type="checkbox"> Photography<br>
+    <input type="checkbox"> Painting<br>
+    <input type="checkbox"> Gardening<br>
+  </div>
+
+  <br>
+
+  <!-- 3. Accordion -->
+  <button class="accordion">Click to Expand (Accordion)</button>
+  <div class="panel">
+    <p>This is hidden content inside the accordion. 
+       Click again to collapse it.</p>
+  </div>
+
+  <script>
+    // Accordion toggle logic
+    const acc = document.querySelector(".accordion");
+    const panel = document.querySelector(".panel");
+
+    acc.addEventListener("click", function() {
+      panel.style.display = panel.style.display === "block" ? "none" : "block";
+    });
+  </script>
+</body>
+</html>
