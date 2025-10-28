@@ -173,7 +173,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-black">
+      <section className="py-24 bg-[#171717] mx-10 mb-5 rounded-2xl shadow-xl">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl font-bold text-white mb-6">
             Ready to Get Started?
