@@ -173,7 +173,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-black dark:from-blue-900 dark:to-purple-900">
+      <section className="py-24 bg-black">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl font-bold text-white mb-6">
             Ready to Get Started?
@@ -184,7 +184,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               size="lg"
-              className="text-lg px-8 py-6 bg-white text-black hover:bg-slate-100 shadow-xl"
+              className="text-lg px-8 py-6 bg-white text-black hover:bg-slate-300 shadow-xl"
               onClick={() => router.push("/items")}
             >
               Start Browsing
@@ -193,7 +193,7 @@ export default function Home() {
             <Button 
               size="lg"
               variant="outline"
-              className="text-lg px-8 py-6 border-2 border-white text-white hover:bg-white/10"
+              className="text-lg px-8 py-6 border-2e hover:bg-slate-300"
               onClick={() => router.push("/login")}
             >
               Sign Up Now

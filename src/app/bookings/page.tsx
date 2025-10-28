@@ -101,7 +101,7 @@ export default function BookingPage() {
       <div className="min-h-screen py-12">
         <div className="max-w-6xl mx-auto px-4">
           <h1 className="text-3xl font-bold mb-8">My Bookings</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="">
             {[1, 2, 3].map((i) => (
               <Skeleton key={i} className="h-64 rounded-lg" />
             ))}
@@ -158,7 +158,7 @@ export default function BookingPage() {
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="">
             {bookings.map((booking) => (
               <Card 
                 key={booking.$id} 

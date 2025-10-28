@@ -154,13 +154,13 @@ export default function ChatListPage() {
 
   return (
     <div className="min-h-screen py-12 bg-white dark:from-slate-950 dark:via-slate-900 dark:to-slate-900">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="flex items-center justify-between mb-10">
+      <div className="mx-auto px-4">
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-full mb-4">
+          <MessageSquare className="h-4 w-4" />
+          <span className="text-sm font-semibold">Messages</span>
+        </div>
+        <div className="">
           <div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-full mb-4">
-              <MessageSquare className="h-4 w-4" />
-              <span className="text-sm font-semibold">Messages</span>
-            </div>
             <h1 className="text-5xl font-black tracking-tight text-slate-900 dark:text-white mb-3">
               Your Conversations
             </h1>
@@ -168,15 +168,8 @@ export default function ChatListPage() {
               Connect with item owners and renters
             </p>
           </div>
-          <Button 
-            onClick={() => router.push("/")}
-            className="bg-black hover:bg-slate-800 text-white font-semibold shadow-lg"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            New Chat
-          </Button>
         </div>
-        
+
         {chats.length === 0 ? (
           <div className="text-center py-20">
             <div className="inline-flex p-6 bg-slate-100 dark:bg-slate-800 rounded-full mb-6">
@@ -186,7 +179,7 @@ export default function ChatListPage() {
             <p className="text-slate-500 dark:text-slate-400 mb-6 max-w-md mx-auto">
               You haven't started any conversations. Browse items and connect with owners!
             </p>
-            <Button 
+            <Button
               onClick={() => router.push("/items")}
               className="bg-black hover:bg-slate-800 text-white font-semibold px-8 py-3"
             >
@@ -195,14 +188,14 @@ export default function ChatListPage() {
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="flex flex-col">
             {chats.map((chat) => {
               const otherParticipantId = getOtherParticipant(chat);
               const participantName = getParticipantName(otherParticipantId);
-              
+
               return (
-                <Card 
-                  key={chat.$id} 
+                <Card
+                  key={chat.$id}
                   className="border-0 bg-white dark:bg-slate-900 shadow-xl hover:shadow-2xl transition-all cursor-pointer hover:scale-105 duration-300 group overflow-hidden"
                   onClick={() => router.push(`/chat/${chat.chatId}`)}
                 >
@@ -233,7 +226,7 @@ export default function ChatListPage() {
                         No messages yet
                       </div>
                     )}
-                    
+
                     <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-500 pt-3 border-t border-slate-100 dark:border-slate-800">
                       <div className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
@@ -246,7 +239,7 @@ export default function ChatListPage() {
                         <span>{chat.participantIds.length}</span>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center justify-end text-blue-600 dark:text-blue-400 text-sm font-semibold group-hover:gap-2 transition-all">
                       <span>Open Chat</span>
                       <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />

@@ -238,7 +238,7 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen p-10">
       <div className="max-w-4xl mx-auto">
         {!isJoined ? (
           <div className="text-center py-12">
