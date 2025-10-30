@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import axios from "axios";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,7 +21,7 @@ function getInitials(name?: string) {
     : "U";
 }
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const params = useParams();
   const searchParams = useSearchParams();
   const { isAuthenticated, loading: authLoading } = useAuth();
@@ -415,5 +415,17 @@ export default function CheckoutPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex justify-center items-center bg-white dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-900">
+        <Skeleton className="w-[420px] h-[420px] rounded-2xl" />
+      </div>
+    }>
+      <CheckoutContent />
+    </Suspense>
   );
 }

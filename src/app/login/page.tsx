@@ -5,9 +5,9 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { account } from "@/lib/appwrite";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 
-export default function LoginPage() {
+function LoginError() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const errorParam = searchParams.get("error");
@@ -41,6 +41,28 @@ export default function LoginPage() {
     }
   };
 
+  if (!errorMessage) return null;
+
+  return (
+    <Alert className="border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-900">
+      <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+      <AlertDescription className="text-amber-700 dark:text-amber-400 space-y-2">
+        <p>{errorMessage}</p>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleClearSession}
+          disabled={clearing}
+          className="w-full mt-2 border-amber-300 hover:bg-amber-100"
+        >
+          {clearing ? "Clearing..." : "Clear Session & Retry"}
+        </Button>
+      </AlertDescription>
+    </Alert>
+  );
+}
+
+export default function LoginPage() {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10 bg-white dark:from-slate-950 dark:to-slate-900">
@@ -56,23 +78,9 @@ export default function LoginPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-md space-y-4">
-            {errorMessage && (
-              <Alert className="border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-900">
-                <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                <AlertDescription className="text-amber-700 dark:text-amber-400 space-y-2">
-                  <p>{errorMessage}</p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleClearSession}
-                    disabled={clearing}
-                    className="w-full mt-2 border-amber-300 hover:bg-amber-100"
-                  >
-                    {clearing ? "Clearing..." : "Clear Session & Retry"}
-                  </Button>
-                </AlertDescription>
-              </Alert>
-            )}
+            <Suspense fallback={null}>
+              <LoginError />
+            </Suspense>
             <LoginForm />
           </div>
         </div>
