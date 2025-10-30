@@ -7,20 +7,22 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { account } from "@/lib/appwrite"
-import { OAuthProvider } from "appwrite"
-import { Mail, Lock, Loader2, AlertCircle } from "lucide-react"
+import { OAuthProvider, ID } from "appwrite"
+import { Mail, Lock, Loader2, AlertCircle, User } from "lucide-react"
 
-export function LoginForm({
+export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
+  const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleSignup = async () => {
     try {
       setLoading(true)
       setError(null)
@@ -33,7 +35,7 @@ export function LoginForm({
       }
       
       const successUrl = `${window.location.origin}/auth/callback`
-      const failureUrl = `${window.location.origin}/login`
+      const failureUrl = `${window.location.origin}/signup`
       
       await account.createOAuth2Session(
         OAuthProvider.Google,
@@ -41,48 +43,101 @@ export function LoginForm({
         failureUrl
       )
     } catch (err: any) {
-      setError(err.message || "Google login failed")
+      setError(err.message || "Google signup failed")
       setLoading(false)
     }
   }
 
-  const login = async (e: React.FormEvent) => {
+  const signup = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setLoading(true)
+
+    // Validation
+    if (!name.trim()) {
+      setError("Please enter your name")
+      setLoading(false)
+      return
+    }
+
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long")
+      setLoading(false)
+      return
+    }
+
+    if (password !== confirmPassword) {
+      setError("Passwords do not match")
+      setLoading(false)
+      return
+    }
+
     try {
+      // Delete any existing session
       await account.deleteSession("current").catch(() => {})
+      
+      // Create new account
+      await account.create(ID.unique(), email, password, name)
+      
+      // Create session
       await account.createEmailPasswordSession(email, password)
+      
+      // Create JWT and set cookie
       const jwtResponse = await account.createJWT()
       const jwt = jwtResponse.jwt
+      
       const res = await fetch("/api/set-jwt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ jwt }),
       })
+      
       if (!res.ok) {
         throw new Error("Failed to set session cookie")
       }
+      
+      // Redirect to profile page
       router.push("/profile")
     } catch (err: any) {
-      setError(err.message || "Login failed. Please check your credentials.")
+      if (err.message.includes("user_already_exists")) {
+        setError("An account with this email already exists. Please login instead.")
+      } else {
+        setError(err.message || "Signup failed. Please try again.")
+      }
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <form className={cn("flex flex-col gap-6", className)} onSubmit={login} {...props}>
+    <form className={cn("flex flex-col gap-6", className)} onSubmit={signup} {...props}>
       <div className="flex flex-col gap-2 text-center">
         <h1 className="text-3xl font-bold text-black dark:text-white">
-          Welcome Back
+          Create Account
         </h1>
         <p className="text-muted-foreground text-sm">
-          Enter your credentials to access your account
+          Enter your details to get started
         </p>
       </div>
       
       <div className="grid gap-5">
+        <div className="grid gap-2">
+          <Label htmlFor="name" className="text-sm font-semibold flex items-center gap-2">
+            <User className="h-4 w-4 text-muted-foreground" />
+            Full Name
+          </Label>
+          <Input 
+            id="name" 
+            type="text" 
+            placeholder="John Doe" 
+            required 
+            value={name} 
+            onChange={e => setName(e.target.value)}
+            className="h-11 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border-slate-200 dark:border-slate-800 focus:border-black dark:focus:border-white"
+            disabled={loading}
+          />
+        </div>
+
         <div className="grid gap-2">
           <Label htmlFor="email" className="text-sm font-semibold flex items-center gap-2">
             <Mail className="h-4 w-4 text-muted-foreground" />
@@ -101,18 +156,10 @@ export function LoginForm({
         </div>
         
         <div className="grid gap-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="password" className="text-sm font-semibold flex items-center gap-2">
-              <Lock className="h-4 w-4 text-muted-foreground" />
-              Password
-            </Label>
-            <a
-              href="#"
-              className="text-sm text-black hover:text-slate-700 dark:text-white dark:hover:text-slate-300 font-medium"
-            >
-              Forgot password?
-            </a>
-          </div>
+          <Label htmlFor="password" className="text-sm font-semibold flex items-center gap-2">
+            <Lock className="h-4 w-4 text-muted-foreground" />
+            Password
+          </Label>
           <Input 
             id="password" 
             type="password" 
@@ -121,6 +168,24 @@ export function LoginForm({
             onChange={e => setPassword(e.target.value)}
             className="h-11 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border-slate-200 dark:border-slate-800 focus:border-black dark:focus:border-white"
             disabled={loading}
+            placeholder="At least 8 characters"
+          />
+        </div>
+
+        <div className="grid gap-2">
+          <Label htmlFor="confirmPassword" className="text-sm font-semibold flex items-center gap-2">
+            <Lock className="h-4 w-4 text-muted-foreground" />
+            Confirm Password
+          </Label>
+          <Input 
+            id="confirmPassword" 
+            type="password" 
+            required 
+            value={confirmPassword} 
+            onChange={e => setConfirmPassword(e.target.value)}
+            className="h-11 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border-slate-200 dark:border-slate-800 focus:border-black dark:focus:border-white"
+            disabled={loading}
+            placeholder="Re-enter your password"
           />
         </div>
         
@@ -141,10 +206,10 @@ export function LoginForm({
           {loading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Signing in...
+              Creating account...
             </>
           ) : (
-            "Sign In"
+            "Create Account"
           )}
         </Button>
         
@@ -158,7 +223,7 @@ export function LoginForm({
           variant="outline" 
           className="w-full h-11 border-2 hover:bg-slate-50 dark:hover:bg-slate-900" 
           type="button"
-          onClick={handleGoogleLogin}
+          onClick={handleGoogleSignup}
           disabled={loading}
         >
           {loading ? (
@@ -174,16 +239,16 @@ export function LoginForm({
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
               </svg>
-              Continue with Google
+              Sign up with Google
             </>
           )}
         </Button>
       </div>
       
       <div className="text-center text-sm">
-        <span className="text-muted-foreground">Don&apos;t have an account? </span>
-        <a href="/signup" className="text-black hover:text-slate-700 dark:text-white dark:hover:text-slate-300 font-semibold underline-offset-4 hover:underline">
-          Sign up
+        <span className="text-muted-foreground">Already have an account? </span>
+        <a href="/login" className="text-black hover:text-slate-700 dark:text-white dark:hover:text-slate-300 font-semibold underline-offset-4 hover:underline">
+          Sign in
         </a>
       </div>
     </form>

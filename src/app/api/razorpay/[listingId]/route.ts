@@ -6,9 +6,9 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_SECRET!,
 });
 
-export async function POST(req: NextRequest, context: { params: { listingId: string } }) {
+export async function POST(req: NextRequest, context: { params: Promise<{ listingId: string }> }) {
   try {
-    const { listingId } = context.params;
+    const { listingId } = await context.params;
     const body = await req.json();
     const { startDate, endDate, totalAmount, itemId } = body;
 

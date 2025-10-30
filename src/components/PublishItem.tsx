@@ -25,7 +25,11 @@ const inputClass =
 
 const labelClass = "font-semibold text-[15px] mb-1 text-slate-700 dark:text-neutral-200";
 
-const PublishItem = () => {
+interface PublishItemProps {
+  onItemPublished?: () => void;
+}
+
+const PublishItem: React.FC<PublishItemProps> = ({ onItemPublished }) => {
   const [form, setForm] = useState(initialState);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -58,6 +62,12 @@ const PublishItem = () => {
       if (res.data.success) {
         setSuccess(true);
         setForm(initialState);
+        // Call the callback to refresh the items list
+        if (onItemPublished) {
+          setTimeout(() => {
+            onItemPublished();
+          }, 1000);
+        }
       } else {
         setError("Failed to publish item.");
       }

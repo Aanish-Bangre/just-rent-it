@@ -1,6 +1,7 @@
 'use client';
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import { NavigationLoader } from "@/components/navigation-loader";
 import { usePathname } from "next/navigation";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
@@ -11,6 +12,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
   return (
     <div className={`${geistSans} ${geistMono} antialiased`}>
+      <NavigationLoader />
       {!isAuthPage ? (
         <SidebarProvider>
           <AppSidebar />

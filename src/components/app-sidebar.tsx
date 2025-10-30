@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import {
     Sidebar,
     SidebarContent,
@@ -21,6 +21,7 @@ export function AppSidebar() {
     const [user, setUser] = useState<any>(null)
     const [unreadNotifications, setUnreadNotifications] = useState<number>(0)
     const router = useRouter()
+    const pathname = usePathname()
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -91,7 +92,11 @@ export function AppSidebar() {
                     <SidebarMenu>
                         <SidebarMenuItem>
                             <Link href="/">
-                                <SidebarMenuButton tooltip="Home">
+                                <SidebarMenuButton 
+                                    tooltip="Home"
+                                    isActive={pathname === "/"}
+                                    className="data-[active=true]:bg-[#dfdfdf]"
+                                >
                                     <Home />
                                     <span>Home</span>
                                 </SidebarMenuButton>
@@ -99,7 +104,11 @@ export function AppSidebar() {
                         </SidebarMenuItem>
                         <SidebarMenuItem>
                             <Link href="/items">
-                                <SidebarMenuButton tooltip="Rent Items">
+                                <SidebarMenuButton 
+                                    tooltip="Rent Items"
+                                    isActive={pathname?.startsWith("/items")}
+                                    className="data-[active=true]:bg-[#dfdfdf]"
+                                >
                                     <ShoppingBag />
                                     <span>Rent Items</span>
                                 </SidebarMenuButton>
@@ -107,7 +116,11 @@ export function AppSidebar() {
                         </SidebarMenuItem>
                         <SidebarMenuItem>
                             <Link href="/bookings">
-                                <SidebarMenuButton tooltip="Bookings">
+                                <SidebarMenuButton 
+                                    tooltip="Bookings"
+                                    isActive={pathname?.startsWith("/bookings")}
+                                    className="data-[active=true]:bg-[#dfdfdf]"
+                                >
                                     <Calendar />
                                     <span>Booking</span>
                                 </SidebarMenuButton>
@@ -115,7 +128,11 @@ export function AppSidebar() {
                         </SidebarMenuItem>
                         <SidebarMenuItem>
                             <Link href="/chat">
-                                <SidebarMenuButton tooltip="Chat">
+                                <SidebarMenuButton 
+                                    tooltip="Chat"
+                                    isActive={pathname?.startsWith("/chat")}
+                                    className="data-[active=true]:bg-[#dfdfdf]"
+                                >
                                     <MessageCircle />
                                     <span>Chat</span>
                                 </SidebarMenuButton>
@@ -123,7 +140,11 @@ export function AppSidebar() {
                         </SidebarMenuItem>
                         <SidebarMenuItem>
                             <Link href="/notifications">
-                                <SidebarMenuButton tooltip="Notifications" className="relative">
+                                <SidebarMenuButton 
+                                    tooltip="Notifications" 
+                                    className="relative data-[active=true]:bg-[#dfdfdf]"
+                                    isActive={pathname?.startsWith("/notifications")}
+                                >
                                     <Bell />
                                     <span>Notifications</span>
                                     {unreadNotifications > 0 && (
@@ -142,7 +163,7 @@ export function AppSidebar() {
                     {isLoggedIn === null ? null : isLoggedIn ? (
                         <>
                             <Link href="/profile" className="block w-full">
-                                <div className="flex items-center gap-3 bg-card rounded-lg px-4 py-3 shadow hover:bg-accent transition cursor-pointer">
+                                <div className={`flex items-center gap-3 bg-card rounded-lg px-4 py-3 shadow hover:bg-accent transition cursor-pointer ${pathname?.startsWith("/profile") ? "ring-2 ring-primary bg-[#dfdfdf5]" : ""}`}>
                                     <Avatar>
                                         {user?.avatarUrl ? (
                                             <AvatarImage src={user.avatarUrl} alt={user?.userName || user?.email || "User"} />
